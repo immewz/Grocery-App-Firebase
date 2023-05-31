@@ -1,6 +1,7 @@
 package com.mewz.grocery.viewholders
 
 import android.view.View
+import com.bumptech.glide.Glide
 import com.mewz.grocery.data.vos.GroceryVO
 import com.mewz.grocery.databinding.ViewHolderGroceryItemBinding
 import com.mewz.grocery.delegates.GroceryViewItemActionDelegate
@@ -26,5 +27,13 @@ class GroceryViewHolder(itemView: View, private val mDelegate: GroceryViewItemAc
         binding.btnEdit.setOnClickListener {
             mDelegate.onTapEditGrocery(data.name ?: "", data.description ?: "", data.amount ?: 0)
         }
+
+        binding.btnFileUpload.setOnClickListener {
+            mDelegate.onTapFileUpload(data)
+        }
+
+        Glide.with(itemView.context)
+            .load(data.image)
+            .into(binding.ivGroceryImage)
     }
 }

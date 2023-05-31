@@ -1,14 +1,16 @@
 package com.mewz.grocery.network
 
+import android.graphics.Bitmap
 import android.util.Log
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.mewz.grocery.data.vos.GroceryVO
+import java.io.ByteArrayOutputStream
+import java.util.*
 
 object CloudFirestoreFirebaseApiImpl: FirebaseApi {
 
     val db = Firebase.firestore
-
     override fun getGroceries(
         onSuccess: (groceries: List<GroceryVO>) -> Unit,
         onFailure: (String) -> Unit
@@ -47,6 +49,7 @@ object CloudFirestoreFirebaseApiImpl: FirebaseApi {
                         grocery.name = data?.get("name") as String
                         grocery.description = data["description"] as String
                         grocery.amount = (data["amount"] as Long).toInt()
+                        grocery.image = data["image"] as String?
                         groceriesList.add(grocery)
                     }
 
@@ -55,11 +58,12 @@ object CloudFirestoreFirebaseApiImpl: FirebaseApi {
             }
     }
 
-    override fun addGrocery(name: String, description: String, amount: Int) {
+    override fun addGrocery(name: String, description: String, amount: Int, image: String) {
         val groceryMap = hashMapOf(
             "name" to name,
             "description" to description,
-            "amount" to amount.toLong()
+            "amount" to amount.toLong(),
+            "image" to image
         )
 
         db.collection("groceries")
@@ -75,5 +79,9 @@ object CloudFirestoreFirebaseApiImpl: FirebaseApi {
             .delete()
             .addOnSuccessListener { Log.d("Success","Successfully added grocery") }
             .addOnFailureListener { Log.d("Failure","Failed to add grocery") }
+    }
+
+    override fun uploadImageAndEditGrocery(image: Bitmap, grocery: GroceryVO) {
+
     }
 }

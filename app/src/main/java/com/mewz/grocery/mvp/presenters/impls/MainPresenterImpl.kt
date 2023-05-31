@@ -1,8 +1,10 @@
 package com.mewz.grocery.mvp.presenters.impls
 
 import android.content.Context
+import android.graphics.Bitmap
 import androidx.lifecycle.LifecycleOwner
 import com.mewz.grocery.data.models.GroceryModelImpl
+import com.mewz.grocery.data.vos.GroceryVO
 import com.mewz.grocery.mvp.presenters.AbstractBasePresenter
 import com.mewz.grocery.mvp.presenters.MainPresenter
 import com.mewz.grocery.mvp.views.MainView
@@ -10,8 +12,15 @@ import com.mewz.grocery.mvp.views.MainView
 class MainPresenterImpl: MainPresenter, AbstractBasePresenter<MainView>() {
 
     val mGroceryModel = GroceryModelImpl
+    private var mChosenGroceryForFileUpload: GroceryVO? = null
     override fun onTapAddGrocery(name: String, description: String, amount: Int) {
-        mGroceryModel.addGrocery(name, description, amount)
+        mGroceryModel.addGrocery(name, description, amount, "")
+    }
+
+    override fun onPhotoTaken(bitmap: Bitmap) {
+        mChosenGroceryForFileUpload?.let {
+            mGroceryModel.uploadImageAndUpdateGrocery(it, bitmap)
+        }
     }
 
     override fun onUiReady(context: Context, owner: LifecycleOwner) {
@@ -31,5 +40,10 @@ class MainPresenterImpl: MainPresenter, AbstractBasePresenter<MainView>() {
 
     override fun onTapEditGrocery(name: String, description: String, amount: Int) {
         mView.showGroceryDialog(name, description, amount.toString())
+    }
+
+    override fun onTapFileUpload(grocery: GroceryVO) {
+        mChosenGroceryForFileUpload = grocery
+        mView.openGallery()
     }
 }

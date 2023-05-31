@@ -1,8 +1,15 @@
 package com.mewz.grocery.activities
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.graphics.ImageDecoder
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.mewz.grocery.R
@@ -16,6 +23,7 @@ import com.mewz.grocery.dialogs.GroceryDialogFragment.Companion.BUNDLE_NAME
 import com.mewz.grocery.mvp.presenters.MainPresenter
 import com.mewz.grocery.mvp.presenters.impls.MainPresenterImpl
 import com.mewz.grocery.mvp.views.MainView
+import java.io.IOException
 
 class MainActivity : BaseActivity(), MainView {
 
@@ -24,6 +32,14 @@ class MainActivity : BaseActivity(), MainView {
     private var mGroceryDialogFragment: GroceryDialogFragment? = null
     private lateinit var mAdapter: GroceryAdapter
     private lateinit var mPresenter: MainPresenter
+
+    companion object {
+        const val PICK_IMAGE_REQUEST = 1111
+
+        fun newIntent(context: Context): Intent {
+            return Intent(context, MainActivity::class.java)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +53,38 @@ class MainActivity : BaseActivity(), MainView {
         setUpActionListeners()
 
         mPresenter.onUiReady(this, this)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.P)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
+            if (data == null || data.data == null) {
+                return
+            }
+
+            val filePath = data.data
+            try {
+
+                filePath?.let {
+                    if (Build.VERSION.SDK_INT >= 29) {
+                        val source: ImageDecoder.Source =
+                            ImageDecoder.createSource(this.contentResolver, filePath)
+
+                        val bitmap = ImageDecoder.decodeBitmap(source)
+                        mPresenter.onPhotoTaken(bitmap)
+                    } else {
+                        val bitmap = MediaStore.Images.Media.getBitmap(
+                            applicationContext.contentResolver, filePath
+                        )
+                        mPresenter.onPhotoTaken(bitmap)
+                    }
+                }
+
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
     }
 
     private fun setUpPresenter() {
@@ -88,6 +136,13 @@ class MainActivity : BaseActivity(), MainView {
 
     override fun showErrorMessage(message: String) {
         Snackbar.make(window.decorView, message, Snackbar.LENGTH_LONG)
+    }
+
+    override fun openGallery() {
+        val intent = Intent()
+        intent.type = "image/*"
+        intent.action = Intent.ACTION_GET_CONTENT
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST)
     }
 
 }
