@@ -20,12 +20,16 @@ class MainPresenterImpl: MainPresenter, AbstractBasePresenter<MainView>() {
                 mView.showGroceryData(it)
             },
             onFailure = {
-                mView.showError(it)
+                mView.showErrorMessage(it)
             }
         )
     }
 
     override fun onTapDeleteGrocery(name: String) {
         mGroceryModel.removeGrocery(name)
+    }
+
+    override fun onTapEditGrocery(name: String, description: String, amount: Int) {
+        mView.showGroceryDialog(name, description, amount.toString())
     }
 }
