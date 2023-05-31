@@ -13,22 +13,45 @@ object CloudFirestoreFirebaseApiImpl: FirebaseApi {
         onSuccess: (groceries: List<GroceryVO>) -> Unit,
         onFailure: (String) -> Unit
     ) {
+        // default get one time data
+//        db.collection("groceries")
+//            .get()
+//            .addOnSuccessListener { result ->
+//                val groceriesList: MutableList<GroceryVO> = arrayListOf()
+//                for (document in result){
+//                    val data = document.data
+//                    var grocery = GroceryVO()
+//                    grocery.name = data["name"] as String
+//                    grocery.description = data["description"] as String
+//                    grocery.amount = (data["amount"] as Long).toInt()
+//                    groceriesList.add(grocery)
+//                }
+//                onSuccess(groceriesList)
+//            }
+//            .addOnFailureListener { exception ->
+//                onFailure(exception.message ?: "Please check connection")
+//            }
+
+        // realtime get data
         db.collection("groceries")
-            .get()
-            .addOnSuccessListener { result ->
-                val groceriesList: MutableList<GroceryVO> = arrayListOf()
-                for (document in result){
-                    val data = document.data
-                    var grocery = GroceryVO()
-                    grocery.name = data["name"] as String
-                    grocery.description = data["description"] as String
-                    grocery.amount = (data["amount"] as Long).toInt()
-                    groceriesList.add(grocery)
+            .addSnapshotListener { value, error ->
+                error?.let {
+                    onFailure(it.message ?: "Please check connection")
+                } ?: run {
+                    val groceriesList: MutableList<GroceryVO> = arrayListOf()
+                    val result = value?.documents ?: arrayListOf()
+
+                    for (document in result){
+                        val data = document.data
+                        val grocery = GroceryVO()
+                        grocery.name = data?.get("name") as String
+                        grocery.description = data["description"] as String
+                        grocery.amount = (data["amount"] as Long).toInt()
+                        groceriesList.add(grocery)
+                    }
+
+                    onSuccess(groceriesList)
                 }
-                onSuccess(groceriesList)
-            }
-            .addOnFailureListener { exception ->
-                onFailure(exception.message ?: "Please check connection")
             }
     }
 
