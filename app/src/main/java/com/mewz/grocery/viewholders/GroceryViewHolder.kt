@@ -3,8 +3,9 @@ package com.mewz.grocery.viewholders
 import android.view.View
 import com.mewz.grocery.data.vos.GroceryVO
 import com.mewz.grocery.databinding.ViewHolderGroceryItemBinding
+import com.mewz.grocery.delegates.GroceryViewItemActionDelegate
 
-class GroceryViewHolder(itemView: View)
+class GroceryViewHolder(itemView: View, private val mDelegate: GroceryViewItemActionDelegate)
     : BaseViewHolder<GroceryVO>(itemView) {
 
     private var binding: ViewHolderGroceryItemBinding
@@ -17,5 +18,9 @@ class GroceryViewHolder(itemView: View)
         binding.tvTitle.text = data.name
         binding.tvDescription.text = data.description
         binding.tvCount.text = "x ${data.amount.toString()}"
+
+        binding.btnDelete.setOnClickListener {
+            mDelegate.onTapDeleteGrocery(data.name ?: "")
+        }
     }
 }

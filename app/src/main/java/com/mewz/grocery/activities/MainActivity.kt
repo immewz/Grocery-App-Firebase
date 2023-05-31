@@ -46,7 +46,7 @@ class MainActivity : BaseActivity(), MainView {
     }
 
     private fun setUpRecyclerView() {
-        mAdapter = GroceryAdapter()
+        mAdapter = GroceryAdapter(mPresenter)
         binding.rvGroceries.adapter = mAdapter
         binding.rvGroceries.layoutManager =
             LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
