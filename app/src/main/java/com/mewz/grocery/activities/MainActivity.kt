@@ -8,6 +8,7 @@ import com.mewz.grocery.R
 import com.mewz.grocery.adapters.GroceryAdapter
 import com.mewz.grocery.data.vos.GroceryVO
 import com.mewz.grocery.databinding.ActivityMainBinding
+import com.mewz.grocery.dialogs.GroceryDialogFragment
 import com.mewz.grocery.mvp.presenters.MainPresenter
 import com.mewz.grocery.mvp.presenters.impls.MainPresenterImpl
 import com.mewz.grocery.mvp.views.MainView
@@ -28,11 +29,20 @@ class MainActivity : BaseActivity(), MainView {
         setUpPresenter()
         setUpRecyclerView()
 
+        setUpActionListeners()
+
         mPresenter.onUiReady(this, this)
     }
 
     private fun setUpPresenter() {
         mPresenter = getPresenter<MainPresenterImpl, MainView>()
+    }
+
+    private fun setUpActionListeners() {
+        binding.fab.setOnClickListener {
+            GroceryDialogFragment.newFragment()
+                .show(supportFragmentManager, GroceryDialogFragment.TAG_ADD_GROCERY_DIALOG)
+        }
     }
 
     private fun setUpRecyclerView() {
