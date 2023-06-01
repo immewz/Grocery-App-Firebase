@@ -2,6 +2,9 @@ package com.mewz.grocery.mvp.presenters.impls
 
 import android.content.Context
 import androidx.lifecycle.LifecycleOwner
+import com.mewz.grocery.analytics.PARAMETER_EMAIL
+import com.mewz.grocery.analytics.SCREEN_LOGIN
+import com.mewz.grocery.analytics.TAP_LOGIN
 import com.mewz.grocery.data.models.AuthenticationModel
 import com.mewz.grocery.data.models.AuthenticationModelImpl
 import com.mewz.grocery.data.models.GroceryModel
@@ -19,6 +22,7 @@ class LoginPresenterImpl: LoginPresenter, AbstractBasePresenter<LoginView>() {
         context: Context,
         owner: LifecycleOwner
     ) {
+        sendEventsToFirebaseAnalytics(context, SCREEN_LOGIN)
         mGroceryModel.setUpRemoteConfigWithDefaultValues()
         mGroceryModel.fetchRemoteConfigs()
     }
@@ -27,6 +31,7 @@ class LoginPresenterImpl: LoginPresenter, AbstractBasePresenter<LoginView>() {
         if(email.isEmpty() || password.isEmpty()){
             mView.showError("Please enter all the fields")
         } else {
+            sendEventsToFirebaseAnalytics(context, TAP_LOGIN, PARAMETER_EMAIL, email)
             mAuthenticatioModel.login(email, password, onSuccess = {
                 mView.navigateToHomeScreen()
             }, onFailure = {

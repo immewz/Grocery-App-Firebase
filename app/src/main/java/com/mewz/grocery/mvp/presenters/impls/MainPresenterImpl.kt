@@ -3,6 +3,7 @@ package com.mewz.grocery.mvp.presenters.impls
 import android.content.Context
 import android.graphics.Bitmap
 import androidx.lifecycle.LifecycleOwner
+import com.mewz.grocery.analytics.SCREEN_HOME
 import com.mewz.grocery.data.models.GroceryModelImpl
 import com.mewz.grocery.data.vos.GroceryVO
 import com.mewz.grocery.mvp.presenters.AbstractBasePresenter
@@ -24,6 +25,7 @@ class MainPresenterImpl: MainPresenter, AbstractBasePresenter<MainView>() {
     }
 
     override fun onUiReady(context: Context, owner: LifecycleOwner) {
+        sendEventsToFirebaseAnalytics(context, SCREEN_HOME)
         mGroceryModel.getGroceries(
             onSuccess = {
                 mView.showGroceryData(it)
