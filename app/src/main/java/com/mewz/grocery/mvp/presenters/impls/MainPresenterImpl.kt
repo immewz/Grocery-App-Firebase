@@ -32,6 +32,8 @@ class MainPresenterImpl: MainPresenter, AbstractBasePresenter<MainView>() {
                 mView.showErrorMessage(it)
             }
         )
+        mView.displayToolbarTitle(mGroceryModel.getAppNameFromRemoteConfig())
+        mView.getRecyclerViewLayoutNumber(mGroceryModel.getRecyclerViewLayoutNumber())
     }
 
     override fun onTapDeleteGrocery(name: String) {

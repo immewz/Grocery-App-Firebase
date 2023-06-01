@@ -4,6 +4,7 @@ import android.view.View
 import com.bumptech.glide.Glide
 import com.mewz.grocery.data.vos.GroceryVO
 import com.mewz.grocery.databinding.ViewHolderGroceryItemBinding
+import com.mewz.grocery.databinding.ViewHolderGroceryItemGridBinding
 import com.mewz.grocery.delegates.GroceryViewItemActionDelegate
 
 class GroceryViewHolder(itemView: View, private val mDelegate: GroceryViewItemActionDelegate)

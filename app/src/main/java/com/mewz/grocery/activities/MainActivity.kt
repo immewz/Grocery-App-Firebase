@@ -10,6 +10,7 @@ import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
 import androidx.annotation.RequiresApi
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.mewz.grocery.R
@@ -48,7 +49,6 @@ class MainActivity : BaseActivity(), MainView {
         setSupportActionBar(binding.toolbar)
 
         setUpPresenter()
-        setUpRecyclerView()
 
         setUpActionListeners()
 
@@ -98,11 +98,9 @@ class MainActivity : BaseActivity(), MainView {
         }
     }
 
-    private fun setUpRecyclerView() {
-        mAdapter = GroceryAdapter(mPresenter)
+    private fun setUpRecyclerView(number: Long) {
+        mAdapter = GroceryAdapter(mPresenter, number)
         binding.rvGroceries.adapter = mAdapter
-        binding.rvGroceries.layoutManager =
-            LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -115,6 +113,10 @@ class MainActivity : BaseActivity(), MainView {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun displayToolbarTitle(title: String) {
+        supportActionBar?.title = title
     }
 
     override fun showGroceryData(groceryList: List<GroceryVO>) {
@@ -143,6 +145,17 @@ class MainActivity : BaseActivity(), MainView {
         intent.type = "image/*"
         intent.action = Intent.ACTION_GET_CONTENT
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST)
+    }
+
+    override fun getRecyclerViewLayoutNumber(number: Long) {
+        setUpRecyclerView(number)
+        if (number == 0L){
+            binding.rvGroceries.layoutManager =
+                LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
+        }else{
+            binding.rvGroceries.layoutManager =
+                GridLayoutManager(applicationContext, 2)
+        }
     }
 
 }

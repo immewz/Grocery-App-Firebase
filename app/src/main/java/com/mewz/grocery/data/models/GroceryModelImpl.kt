@@ -5,11 +5,14 @@ import com.mewz.grocery.data.vos.GroceryVO
 import com.mewz.grocery.network.CloudFirestoreFirebaseApiImpl
 import com.mewz.grocery.network.FirebaseApi
 import com.mewz.grocery.network.RealtimeDatabaseFirebaseApiImpl
+import com.mewz.grocery.network.remoteconfig.FirebaseRemoteConfigManager
 
 object GroceryModelImpl: GroceryModel {
 
 //    override var mFirebaseApi: FirebaseApi = RealtimeDatabaseFirebaseApiImpl
     override var mFirebaseApi: FirebaseApi = CloudFirestoreFirebaseApiImpl
+
+    override var mFirebaseRemoteConfigManager: FirebaseRemoteConfigManager = FirebaseRemoteConfigManager
 
     override fun getGroceries(onSuccess: (List<GroceryVO>) -> Unit, onFailure: (String) -> Unit) {
         mFirebaseApi.getGroceries(onSuccess, onFailure)
@@ -25,5 +28,21 @@ object GroceryModelImpl: GroceryModel {
 
     override fun uploadImageAndUpdateGrocery(grocery: GroceryVO, image: Bitmap) {
         mFirebaseApi.uploadImageAndEditGrocery(image, grocery)
+    }
+
+    override fun setUpRemoteConfigWithDefaultValues() {
+        mFirebaseRemoteConfigManager.setUpRemoteConfigWithDefaultValue()
+    }
+
+    override fun fetchRemoteConfigs() {
+        mFirebaseRemoteConfigManager.fetchRemoteConfigs()
+    }
+
+    override fun getAppNameFromRemoteConfig(): String {
+        return mFirebaseRemoteConfigManager.getToolbarName()
+    }
+
+    override fun getRecyclerViewLayoutNumber(): Long {
+        return mFirebaseRemoteConfigManager.getRecyclerViewLayoutNumber()
     }
 }
