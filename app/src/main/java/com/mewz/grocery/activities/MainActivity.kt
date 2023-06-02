@@ -7,6 +7,7 @@ import android.graphics.ImageDecoder
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.mewz.grocery.R
 import com.mewz.grocery.adapters.GroceryAdapter
 import com.mewz.grocery.data.vos.GroceryVO
@@ -57,6 +59,18 @@ class MainActivity : BaseActivity(), MainView {
         mPresenter.onUiReady(this, this)
 
         // addCrashButton()
+
+        FirebaseDynamicLinks.getInstance()
+            .getDynamicLink(intent)
+            .addOnSuccessListener {
+                val deepLink = it.link
+                deepLink?.let { deepLink ->
+                    Log.d("deepLink", deepLink.toString())
+                }
+            }
+            .addOnFailureListener {
+                Log.d("error", it.localizedMessage)
+            }
     }
 
     private fun addCrashButton(){
