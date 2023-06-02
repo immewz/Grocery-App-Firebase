@@ -2,10 +2,11 @@ package com.mewz.grocery.activities
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import com.mewz.grocery.R
+import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.iid.FirebaseInstanceIdReceiver
+import com.google.firebase.iid.internal.FirebaseInstanceIdInternal
 import com.mewz.grocery.databinding.ActivityLoginBinding
 import com.mewz.grocery.mvp.presenters.LoginPresenter
 import com.mewz.grocery.mvp.presenters.impls.LoginPresenterImpl
@@ -30,6 +31,10 @@ class LoginActivity : BaseActivity(), LoginView {
 
         setUpPresenter()
         setUpActionListeners()
+
+        FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener {
+            Log.d("fbToken", it.token)
+        }
 
         mPresenter.onUiReady(this, this)
     }
